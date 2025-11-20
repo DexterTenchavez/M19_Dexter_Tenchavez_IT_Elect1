@@ -15,6 +15,31 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { addUser } from './database';
 
+// SVG Icons as components
+const CameraIcon = () => (
+  <Text style={styles.icon}>📸</Text>
+);
+
+const GalleryIcon = () => (
+  <Text style={styles.icon}>🖼️</Text>
+);
+
+const UserIcon = () => (
+  <Text style={styles.inputIcon}>👤</Text>
+);
+
+const LockIcon = () => (
+  <Text style={styles.inputIcon}>🔒</Text>
+);
+
+const RegisterIcon = () => (
+  <Text style={styles.buttonIcon}>✨</Text>
+);
+
+const LoginIcon = () => (
+  <Text style={styles.linkIcon}>🔑</Text>
+);
+
 export default function RegisterScreen({ navigation }) {
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
@@ -140,66 +165,91 @@ export default function RegisterScreen({ navigation }) {
                   style={styles.photoButton}
                   onPress={() => pickImage('camera')}
                 >
-                  <Text style={styles.photoButtonText}>📸 Selfie</Text>
+                  <CameraIcon />
+                  <Text style={styles.photoButtonText}>Selfie</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
                   style={styles.photoButton}
                   onPress={() => pickImage('gallery')}
                 >
-                  <Text style={styles.photoButtonText}>📁 Gallery</Text>
+                  <GalleryIcon />
+                  <Text style={styles.photoButtonText}>Gallery</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
 
           {/* Form Fields */}
-          <TextInput  
-            placeholder="Full Name"  
-            style={styles.input}  
-            value={fullName}  
-            onChangeText={setFullName}  
-            placeholderTextColor="#999"
-          />  
-          <TextInput  
-            placeholder="Username"  
-            style={styles.input}  
-            value={username}  
-            onChangeText={setUsername}  
-            autoCapitalize="none"
-            placeholderTextColor="#999"
-          />  
-          <TextInput  
-            placeholder="Password (min 4 characters)"  
-            style={styles.input}  
-            value={password}  
-            onChangeText={setPassword}  
-            secureTextEntry  
-            placeholderTextColor="#999"
-          />  
-          <TextInput  
-            placeholder="Confirm Password"  
-            style={styles.input}  
-            value={confirmPassword}  
-            onChangeText={setConfirmPassword}  
-            secureTextEntry  
-            placeholderTextColor="#999"
-          />  
+          <View style={styles.inputContainer}>
+            <UserIcon />
+            <TextInput  
+              placeholder="Full Name"  
+              style={styles.input}  
+              value={fullName}  
+              onChangeText={setFullName}  
+              placeholderTextColor="#999"
+            />  
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputIcon}>@</Text>
+            <TextInput  
+              placeholder="Username"  
+              style={styles.input}  
+              value={username}  
+              onChangeText={setUsername}  
+              autoCapitalize="none"
+              placeholderTextColor="#999"
+            />  
+          </View>
+
+          <View style={styles.inputContainer}>
+            <LockIcon />
+            <TextInput  
+              placeholder="Password (min 4 characters)"  
+              style={styles.input}  
+              value={password}  
+              onChangeText={setPassword}  
+              secureTextEntry  
+              placeholderTextColor="#999"
+            />  
+          </View>
+
+          <View style={styles.inputContainer}>
+            <LockIcon />
+            <TextInput  
+              placeholder="Confirm Password"  
+              style={styles.input}  
+              value={confirmPassword}  
+              onChangeText={setConfirmPassword}  
+              secureTextEntry  
+              placeholderTextColor="#999"
+            />  
+          </View>
 
           <TouchableOpacity 
             style={[styles.button, loading && styles.buttonDisabled]} 
             onPress={handleRegister}
             disabled={loading}
           >  
+            <RegisterIcon />
             <Text style={styles.buttonText}>
-              {loading ? "Creating Account..." : "Register"}
+              {loading ? "Creating Account..." : "Create Account"}
             </Text>  
           </TouchableOpacity>  
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
 
           <TouchableOpacity 
             style={styles.linkButton}
             onPress={() => navigation.navigate("Login")}
           >  
+            <LoginIcon />
             <Text style={styles.linkText}>Already have an account? Login</Text>  
           </TouchableOpacity>  
         </View>
@@ -211,7 +261,7 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#007AFF",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -223,24 +273,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "700",
-    color: "#333",
+    color: "black",
     marginBottom: 5,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
     color: "#666",
+    textAlign: "center",
   },
   formContainer: {
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: 20,
     padding: 25,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowRadius: 20,
+    elevation: 10,
   },
   photoSection: {
     marginBottom: 25,
@@ -282,32 +334,49 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   photoButton: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#007AFF",
     paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
     minWidth: 100,
+    justifyContent: "center",
   },
   photoButtonText: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
-    textAlign: "center",
+    marginLeft: 5,
   },
-  input: {
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 15,
+    borderRadius: 15,
     marginBottom: 15,
-    fontSize: 16,
     backgroundColor: "#f8f9fa",
+    paddingHorizontal: 15,
+  },
+  inputIcon: {
+    fontSize: 18,
+    marginRight: 10,
+    color: "#666",
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 15,
+    fontSize: 16,
+    color: "#333",
   },
   button: {
+    flexDirection: "row",
     backgroundColor: "#28a745",
     padding: 16,
-    borderRadius: 10,
+    borderRadius: 15,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
     shadowColor: "#28a745",
     shadowOffset: { width: 0, height: 4 },
@@ -320,19 +389,52 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 0,
   },
+  buttonIcon: {
+    fontSize: 18,
+    marginRight: 8,
+    color: "#fff",
+  },
   buttonText: { 
     color: "#fff", 
     fontSize: 18, 
     fontWeight: "600" 
   },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#e9ecef",
+  },
+  dividerText: {
+    marginHorizontal: 15,
+    color: "#666",
+    fontSize: 14,
+  },
   linkButton: {
+    flexDirection: "row",
     padding: 15,
     alignItems: "center",
-    marginTop: 15,
+    justifyContent: "center",
+    backgroundColor: "#f8f9fa",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#e9ecef",
+  },
+  linkIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    color: "#007AFF",
   },
   linkText: { 
     color: "#007AFF", 
     fontSize: 16,
     fontWeight: "500"
+  },
+  icon: {
+    fontSize: 16,
   },
 });

@@ -6,6 +6,7 @@ import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
 import HomeScreen from './HomeScreen';
 import ChatScreen from './ChatScreen';
+import InfoScreen from './InfoScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,7 +28,7 @@ export default function App() {
   }, []);
 
   if (!dbInitialized) {
-    return null; // Or a loading screen
+    return null;
   }
 
   return (
@@ -46,12 +47,47 @@ export default function App() {
         <Stack.Screen 
           name="Home" 
           component={HomeScreen}
-          options={{ headerShown: true, title: 'Chats' }}
+          options={{ 
+            headerShown: true, 
+            title: 'Chats',
+            headerStyle: {
+              backgroundColor: '#007AFF',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            }
+          }}
         />
         <Stack.Screen 
           name="Chat" 
           component={ChatScreen}
-          options={{ headerShown: true }}
+          options={({ route }) => ({ 
+            headerShown: true,
+            title: route.params?.otherUser?.fullName || 'Chat',
+            headerStyle: {
+              backgroundColor: '#007AFF',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            }
+          })}
+        />
+        <Stack.Screen 
+          name="Info" 
+          component={InfoScreen}
+          options={{ 
+            headerShown: true,
+            title: 'App Info',
+            headerStyle: {
+              backgroundColor: '#007AFF',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            }
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

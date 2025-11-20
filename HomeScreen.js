@@ -14,6 +14,18 @@ import {
 import { getAllUsers, getLastMessageBetweenUsers, getUnreadMessageCount } from './database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const MessageIcon = () => (
+  <Text style={styles.icon}>💬</Text>
+);
+
+const LogoutIcon = () => (
+  <Text style={styles.icon}>🚪</Text>
+);
+
+const UserIcon = () => (
+  <Text style={styles.icon}>👤</Text>
+);
+
 export default function HomeScreen({ navigation }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
@@ -38,7 +50,6 @@ export default function HomeScreen({ navigation }) {
         const user = JSON.parse(userJson);
         setCurrentUser(user);
       } else {
-        // Not logged in, go back to login
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }],
@@ -57,18 +68,15 @@ export default function HomeScreen({ navigation }) {
       if (result.success) {
         setUsers(result.users);
         
-        // Load last messages and unread counts for each user
         const messages = {};
         const counts = {};
         
         for (const user of result.users) {
-          // Get last message
           const messageResult = await getLastMessageBetweenUsers(currentUser.id, user.id);
           if (messageResult.success && messageResult.message) {
             messages[user.id] = messageResult.message;
           }
           
-          // Get unread count
           const countResult = await getUnreadMessageCount(currentUser.id, user.id);
           if (countResult.success) {
             counts[user.id] = countResult.count;
@@ -125,20 +133,17 @@ export default function HomeScreen({ navigation }) {
 
   const formatMessage = (message) => {
     if (!message) return 'No messages yet';
-    
     const text = message.message;
     return text.length > 35 ? text.substring(0, 35) + '...' : text;
   };
 
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
-    
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now - date;
     
     if (diff < 24 * 60 * 60 * 1000) {
-      // Less than 24 hours
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } else {
       return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -175,7 +180,10 @@ export default function HomeScreen({ navigation }) {
         
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{user.fullName}</Text>
-          <Text style={styles.lastMessage} numberOfLines={1}>
+          <Text style={[
+            styles.lastMessage,
+            unreadCount > 0 && styles.unreadMessage
+          ]} numberOfLines={1}>
             {formatMessage(lastMessage)}
           </Text>
         </View>
@@ -195,27 +203,31 @@ export default function HomeScreen({ navigation }) {
   if (!currentUser) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
+        <MessageIcon />
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="light-content" backgroundColor="#007AFF" />
       
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerInfo}>
-          <Text style={styles.welcomeText}>Welcome,</Text>
-          <Text style={styles.userNameHeader}>{currentUser.fullName}</Text>
+          <View style={styles.welcomeContainer}>
+            <UserIcon />
+            <View style={styles.welcomeTextContainer}>
+              <Text style={styles.welcomeText}>Welcome back</Text>
+              <Text style={styles.userNameHeader}>{currentUser.fullName}</Text>
+            </View>
+          </View>
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
+          <LogoutIcon />
         </TouchableOpacity>
       </View>
 
-      {/* Users List */}
       <FlatList
         data={users}
         renderItem={renderUserItem}
@@ -226,6 +238,7 @@ export default function HomeScreen({ navigation }) {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
+            <MessageIcon />
             <Text style={styles.emptyText}>No users found</Text>
             <Text style={styles.emptySubtext}>
               Create another account to start chatting
@@ -246,6 +259,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
   },
   header: {
     flexDirection: "row",
@@ -253,33 +272,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    backgroundColor: "#007AFF",
   },
   headerInfo: {
     flex: 1,
   },
+  welcomeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  welcomeTextContainer: {
+    marginLeft: 10,
+  },
   welcomeText: {
     fontSize: 14,
-    color: "#666",
+    color: "rgba(255,255,255,0.8)",
   },
   userNameHeader: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333",
+    color: "#fff",
     marginTop: 2,
   },
   logoutButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  logoutText: {
-    color: "#666",
-    fontWeight: "500",
+    padding: 10,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContainer: {
     flexGrow: 1,
@@ -345,6 +367,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
+  unreadMessage: {
+    color: "#007AFF",
+    fontWeight: "500",
+  },
   messageMeta: {
     alignItems: "flex-end",
   },
@@ -369,10 +395,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#666",
     marginBottom: 8,
+    marginTop: 10,
   },
   emptySubtext: {
     fontSize: 14,
     color: "#999",
     textAlign: "center",
+  },
+  icon: {
+    fontSize: 20,
   },
 });
