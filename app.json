@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/myPicture.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#007AFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/myPicture.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#007AFF"
       },
       "package": "com.dextertenchavez.messenger"
     },

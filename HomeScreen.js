@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { getAllUsers, getLastMessageBetweenUsers, getUnreadMessageCount } from './database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 const MessageIcon = () => (
   <Text style={styles.icon}>💬</Text>
@@ -32,6 +33,27 @@ export default function HomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastMessages, setLastMessages] = useState({});
   const [unreadCounts, setUnreadCounts] = useState({});
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity 
+            style={styles.infoButton}
+            onPress={() => navigation.navigate('Info')}
+          >
+            <Ionicons name="information-circle" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.logoutButton} 
+            onPress={handleLogout}
+          >
+            <Ionicons name="log-out-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation, currentUser]);
 
   useEffect(() => {
     loadCurrentUser();
@@ -223,9 +245,6 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LogoutIcon />
-        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -294,14 +313,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 2,
   },
+  infoButton: {
+    padding: 10,
+    marginRight: 10,
+  },
   logoutButton: {
     padding: 10,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   listContainer: {
     flexGrow: 1,

@@ -87,22 +87,7 @@ export default function InfoScreen({ navigation }) {
           )}
         </View>
 
-        {/* App Info */}
-        <View style={styles.infoCard}>
-          <Text style={styles.cardTitle}>App Information</Text>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>App Name:</Text>
-            <Text style={styles.infoValue}>Messenger - Chat Bubble</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Version:</Text>
-            <Text style={styles.infoValue}>1.0.0</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>Platform:</Text>
-            <Text style={styles.infoValue}>React Native / Expo</Text>
-          </View>
-        </View>
+      
 
         {/* Submission Instructions */}
         <View style={styles.infoCard}>
